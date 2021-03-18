@@ -66,8 +66,7 @@ async def _(event):
             await event.delete()
             await event.client.send_message(event.chat_id, r3, reply_to=reply_message.id)
             await event.client.delete_messages(
-                    conv.chat_id, [msg.id, r1.id, r2.id, r3.id]
-                )
+                    conv.chat_id, [msg.id, r1.id, r2.id, r3.id)
         else:
             await event.edit("try again")
         await bot.send_read_acknowledge(conv.chat_id)
