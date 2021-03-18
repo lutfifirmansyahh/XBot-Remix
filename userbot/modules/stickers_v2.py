@@ -55,6 +55,7 @@ async def _(event):
             msg = await conv.send_message(reply_message)
             r1 = await conv.get_response()
             r2 = await conv.get_response()
+            r3 = await conv.get_response()
             await bot.send_read_acknowledge(conv.chat_id)
         except YouBlockedUserError:
             await event.reply("unblock me (@stickers_to_image_bot) to work")
@@ -63,10 +64,21 @@ async def _(event):
             return
             await event.edit("Sorry i cant't convert it check wheter is non animated sticker or not")
         else:
-            await event.client.send_message(event.chat_id, response.message, reply_to=reply_message.id)
-            await event.client.delete_message(
-                    conv.chat_id, [msg.id, r1.id, r2.id, r3.id])
-            await event.delete()
+            img = await event.client.download_media(r3)
+            await event.edit("`Uploading..`")
+            await event.client.send_file(
+                    event.chat_id,
+                    img,
+                    force_document=False,
+                    reply_to=event.reply_to_msg_id,
+                )
+            await event.client.delete_messages(
+                    conv.chat_id, [r1.id, r2.id, r3.id, msg.id]
+                )
+        await event.delete()
+        os.system("rm *.png *.jpg")
+    except TimeoutError:
+        return await event.edit("`@xbotgroup_bot isnt responding..`")
 
 
 @register(outgoing=True, pattern="^.stoi$")
