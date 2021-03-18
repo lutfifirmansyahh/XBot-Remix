@@ -1,46 +1,39 @@
-import random
-import requests
+import asyncio
+import os
 from asyncio.exceptions import TimeoutError
 
-from telethon import events
 from telethon.errors.rpcerrorlist import YouBlockedUserError
+
 from userbot import CMD_HELP, bot
 from userbot.events import register
 
-@register(outgoing=True, pattern=r"^\.ustat")
-async def quotess(qotli):
-    if qotli.fwd_from:
-        return
-    if not qotli.reply_to_msg_id:
-        return await qotli.edit("```Balas di Pesan Goblok!!.```")
-    reply_message = await qotli.get_reply_message()
-    if not reply_message.text:
-        return await qotli.edit("```Balas di Pesan Goblok!!```")
-    chat = "@tgscanrobot"
-    if reply_message.sender.bot:
-        return await qotli.edit("```Balas di Pesan Goblok!!.```")
-    await qotli.edit("```Mengecek Group......```")
+
+@register(outgoing=True, pattern=r"^\.ustat(?: |$)(.*)")
+async def _(event):
     try:
-        async with bot.conversation(chat) as conv:
+        event.pattern_match.group(1)
+        await event.edit("`Processing..`")
+        async with bot.conversation("@tgscanrobot") as conv:
             try:
-                response = conv.wait_event(
-                    events.NewMessage(
-                        incoming=True,
-                        from_users=1557162396))
-                msg = await bot.forward_messages(chat, reply_message)
-                response = await response
-                """ - don't spam notif - """
+                r1 = await conv.get_response()
+                r2 = await conv.get_response()
                 await bot.send_read_acknowledge(conv.chat_id)
             except YouBlockedUserError:
-                return await qotli.reply("```Please unblock @tgscanrobot and try again```")
-            if response.text.startswith("Hi!"):
-                await qotli.edit("```Can you kindly disable your forward privacy settings for good?```")
-            else:
-                await qotli.delete()
-                await bot.forward_messages(qotli.chat_id, response.message)
-                await bot.send_read_acknowledge(qotli.chat_id)
-                """ - cleanup chat after completed - """
-                await qotli.client.delete_messages(conv.chat_id,
-                                                   [msg.id, response.id])
+                return await event.reply("Unblock @tgscanrobot plox")
+            if r1.text.startswith("No"):
+                return await event.edit("`No result found for`")
+                p = event.client.send_messages(
+                    event.chat_id,
+                    r1,
+                    reply_to=event.reply_to_msg_id,
+                )
+                event.client.send_messages(
+                    event.chat_id,
+                    r2,
+                    reply_to=event.reply_to_msg_id,
+                )
+                await event.client.delete_messages(
+                    conv.chat_id, [r1.id, r2.id]
+                )
     except TimeoutError:
-        await qotli.edit()
+        return await event.edit("`@xbotgroup_bot isnt responding..`")
