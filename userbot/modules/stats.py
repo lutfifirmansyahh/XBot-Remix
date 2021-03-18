@@ -30,11 +30,6 @@ async def _(event):
         if response.text.startswith("I understand only stickers"):
             await event.edit("Sorry i cant't convert it check wheter is non animated sticker or not")
         else:
-            response = conv.wait_event(
-                events.NewMessage(
-                    incoming=True,
-                    from_users=1557162396))
-            response = await response
             if response.text.startswith("Information"):
                 response = conv.wait_event(
                     events.NewMessage(
