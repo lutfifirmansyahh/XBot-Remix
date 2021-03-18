@@ -9,11 +9,10 @@ async def _(event):
     if event.fwd_from:
         return
     if not event.reply_to_msg_id:
-        return
-    await event.edit("Balas di Pesan Goblok!!")
+        return await event.edit("```Balas di Pesan Goblok!!.```")
     reply_message = await event.get_reply_message()
     if not reply_message.text:
-        return
+        return await event.edit("```Balas di Pesan Goblok!!```")
     await event.edit("Balas di Pesan Goblok!!")
     chat = "@tgscanrobot"
     await event.edit("Checking....")
