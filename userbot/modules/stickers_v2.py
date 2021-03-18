@@ -80,9 +80,7 @@ async def _(event):
                 )
         await event.delete()
         os.system("rm *.png *.jpg")
-    except TimeoutError:
-        return await event.edit("`@xbotgroup_bot isnt responding..`")
-
+    
 
 @register(outgoing=True, pattern="^.stoi$")
 async def sticker_to_png(sticker):
