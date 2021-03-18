@@ -56,15 +56,16 @@ async def _(event):
             r1 = await conv.get_response()
             r2 = await conv.get_response()
             r3 = await conv.get_response()
-            await bot.send_read_acknowledge(conv.chat_id)
         except YouBlockedUserError:
             await event.reply("unblock me (@stickers_to_image_bot) to work")
             return
         if r1.text.startswith("I"):
             return
             await event.edit("Sorry i cant't convert it check wheter is non animated sticker or not")
-            await event.client.send_messages(event.chat_id, r3, reply_to=reply_message.id)
-            await event.client.delete_messages(
+        else:
+            await bot.send_read_acknowledge(conv.chat_id)
+            await event.client.send_message(event.chat_id, r3, reply_to=reply_message.id)
+            await event.client.delete_message(
                     conv.chat_id, [msg.id, r1.id, r2.id, r3.id])
             await event.delete()
 
