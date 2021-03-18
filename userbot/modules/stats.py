@@ -26,8 +26,8 @@ async def _(event):
         except YouBlockedUserError:
             await event.reply("unblock me @tgscanrobot to work")
             return
-        if response.text.startswith("I understand only stickers"):
-            await event.edit("Sorry i cant't convert it check wheter is non animated sticker or not")
+        if response.text.startswith("I understand only text"):
+            await event.edit("Sorry i cant't check group this user **BURIK!!**")
         else:
             if response.text.startswith("Information"):
                 response = conv.wait_event(
@@ -38,7 +38,7 @@ async def _(event):
                 await event.delete()
                 await event.client.send_message(event.chat_id, response.message, reply_to=reply_message.id)
                 await event.client.delete_messages(conv.chat_id,
-                                                   [msg.id, response.text.startswith.id, response.id])
+                                                   [msg.id, response.id, response.text.id])
             else:
                 await event.edit("try again")
         await bot.send_read_acknowledge(conv.chat_id)
