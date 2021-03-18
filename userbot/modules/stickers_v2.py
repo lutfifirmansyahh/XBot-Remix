@@ -49,36 +49,25 @@ async def _(event):
     if not reply_message.media:
         await event.edit("Balas di Sticker Tolol!!")
         return
-    chat = "@stickers_to_image_bot"
     await event.edit("Convert to image..")
-    async with event.client.conversation(chat) as conv:
+    msg = await event.client.forward_messages(reply_message)
+    async with bot.conversation("@stickers_to_image_bot") as conv:
         try:
-            response = conv.wait_event(
-                events.NewMessage(
-                    incoming=True,
-                    from_users=611085086))
-            msg = await event.client.forward_messages(chat, reply_message)
-            response = await response
+            r1 = await conv.get_response()
+            r2 = await conv.get_response()
+            r3 = await conv.get_response()
         except YouBlockedUserError:
             await event.reply("unblock me (@stickers_to_image_bot) to work")
             return
-        if response.text.startswith("I understand only stickers"):
+        if r1.text.startswith("I've got your sticker"):
+            return
             await event.edit("Sorry i cant't convert it check wheter is non animated sticker or not")
-        else:
-            response = conv.wait_event(
-                events.NewMessage(
-                    incoming=True,
-                    from_users=611085086))
-            response = await response
-            if response.text.startswith("..."):
-                response = conv.wait_event(
-                    events.NewMessage(
-                        incoming=True,
-                        from_users=611085086))
-                response = await response
+            else:
                 await event.delete()
-                await event.client.send_message(event.chat_id, response.message, reply_to=reply_message.id)
-                await event.client.delete_message(event.chat_id, [msg.id, response.id])
+                await event.client.send_message(event.chat_id, r3, reply_to=reply_message.id)
+                await event.client.delete_messages(
+                    conv.chat_id, [r1.id, r2.id, r3.id]
+                )
             else:
                 await event.edit("try again")
         await bot.send_read_acknowledge(conv.chat_id)
