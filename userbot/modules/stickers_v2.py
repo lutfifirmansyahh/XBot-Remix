@@ -62,14 +62,14 @@ async def _(event):
         if r1.text.startswith("I've got your sticker"):
             return
             await event.edit("Sorry i cant't convert it check wheter is non animated sticker or not")
-            else:
-                await event.delete()
-                await event.client.send_message(event.chat_id, r3, reply_to=reply_message.id)
-                await event.client.delete_messages(
+        else:
+            await event.delete()
+            await event.client.send_message(event.chat_id, r3, reply_to=reply_message.id)
+            await event.client.delete_messages(
                     conv.chat_id, [msg.id, r1.id, r2.id, r3.id]
                 )
-            else:
-                await event.edit("try again")
+        else:
+            await event.edit("try again")
         await bot.send_read_acknowledge(conv.chat_id)
 
 
