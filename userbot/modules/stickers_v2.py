@@ -64,7 +64,7 @@ async def _(event):
             return
             await event.edit("Sorry i cant't convert it check wheter is non animated sticker or not")
         else:
-            await event.client.send_messages(conv.chat_id, r3.id, reply_to=reply_message.id)
+            await bot.send_messages(event.chat_id, r3.id, reply_to=reply_message.id)
             await event.client.delete_messages(
                     conv.chat_id, [msg.id, r1.id, r2.id, r3.id])
             await event.delete()
