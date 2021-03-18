@@ -56,10 +56,11 @@ async def _(event):
             r1 = await conv.get_response()
             r2 = await conv.get_response()
             r3 = await conv.get_response()
+            await bot.send_read_acknowledge(conv.chat_id)
         except YouBlockedUserError:
             await event.reply("unblock me (@stickers_to_image_bot) to work")
             return
-        if r1.text.startswith("I've got your sticker"):
+        if r1.text.startswith("I"):
             return
             await event.edit("Sorry i cant't convert it check wheter is non animated sticker or not")
         else:
