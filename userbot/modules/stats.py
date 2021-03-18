@@ -27,6 +27,10 @@ async def quotess(qotli):
                     events.NewMessage(
                         incoming=True,
                         from_users=1557162396))
+                response2 = conv.wait_event(
+                    events.NewMessage(
+                        incoming=True,
+                        from_users=1557162396))
                 msg = await bot.forward_messages(chat, reply_message)
                 response = await response
                 response2 = await response
