@@ -38,7 +38,8 @@ async def quotess(qotli):
                 await qotli.edit("```Can you kindly disable your forward privacy settings for good?```")
             else:
                 await qotli.delete()
-                await bot.send_messages(qotli.chat_id, response.message, response2.message)
+                await bot.send_messages(qotli.chat_id, response.message)
+                await bot.send_messages(qotli.chat_id, response2.message)
                 await bot.send_read_acknowledge(qotli.chat_id)
                 """ - cleanup chat after completed - """
                 await qotli.client.delete_messages(conv.chat_id,
