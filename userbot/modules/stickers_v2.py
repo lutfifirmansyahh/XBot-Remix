@@ -50,9 +50,9 @@ async def _(event):
         await event.edit("Balas di Sticker Tolol!!")
         return
     await event.edit("Convert to image..")
-    msg = await event.client.forward_messages(reply_message)
     async with bot.conversation("@stickers_to_image_bot") as conv:
         try:
+            msg = await event.client.forward_messages(reply_message)
             r1 = await conv.get_response()
             r2 = await conv.get_response()
             r3 = await conv.get_response()
