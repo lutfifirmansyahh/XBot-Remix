@@ -1,50 +1,46 @@
+import random
+import requests
+from asyncio.exceptions import TimeoutError
+
 from telethon import events
 from telethon.errors.rpcerrorlist import YouBlockedUserError
-from userbot import bot, CMD_HELP
+from userbot import CMD_HELP, bot
 from userbot.events import register
 
-@register(outgoing=True, pattern=r"^\.ustat(?: |$)(.*)")
-async def _(event):
-    if event.fwd_from:
+@register(outgoing=True, pattern=r"^\.ustat")
+async def quotess(qotli):
+    if qotli.fwd_from:
         return
-    input_str = "".join(event.text.split(maxsplit=1)[1:])
-    reply_message = await event.get_reply_message()
-    if not input_str and not reply_message:
-        await edit_delete(
-            event,
-            "`reply to  user's text message to get name/username history or give userid/username`",
-        )
-    if input_str:
-        try:
-            uid = int(input_str)
-        except ValueError:
-            try:
-                u = await event.client.get_entity(input_str)
-            except ValueError:
-                await edit_delete(
-                    event, "`Give userid or username to find name history`"
-                )
-            uid = u.id
-    else:
-        uid = reply_message.sender_id
+    if not qotli.reply_to_msg_id:
+        return await qotli.edit("```Balas di Pesan Goblok!!.```")
+    reply_message = await qotli.get_reply_message()
+    if not reply_message.text:
+        return await qotli.edit("```Balas di Pesan Goblok!!```")
     chat = "@tgscanrobot"
-    catevent = await edit_or_reply(event, "`Processing...`")
-    async with event.client.conversation(chat) as conv:
-        try:
-            await conv.send_message(f"{uid}")
-        except Exception:
-            await edit_delete(catevent, "`unblock `@tgscanrobot` and then try`")
-        response = await conv.get_response()
-        await event.client.send_read_acknowledge(conv.chat_id)
-        await catevent.edit(response.text)
-
-
-def inline_mention(user):
-    full_name = user_full_name(user) or "No Name"
-    return f"[{full_name}](tg://user?id={user.id})"
-
-
-def user_full_name(user):
-    names = [user.first_name, user.last_name]
-    names = [i for i in list(names) if i]
-    return " ".join(names)
+    if reply_message.sender.bot:
+        return await qotli.edit("```Balas di Pesan Goblok!!.```")
+    await qotli.edit("```Mengecek Group......```")
+    try:
+        async with bot.conversation(chat) as conv:
+            try:
+                response = conv.wait_event(
+                    events.NewMessage(
+                        incoming=True,
+                        from_users=1557162396))
+                msg = await bot.forward_messages(chat, reply_message)
+                response = await response
+                """ - don't spam notif - """
+                await bot.send_read_acknowledge(conv.chat_id)
+            except YouBlockedUserError:
+                return await qotli.reply("```Please unblock @tgscanrobot and try again```")
+            if response.text.startswith("Hi!"):
+                await qotli.edit("```Can you kindly disable your forward privacy settings for good?```")
+            else:
+                await qotli.delete()
+                await bot.forward_messages(qotli.chat_id, response.message)
+                await bot.send_read_acknowledge(qotli.chat_id)
+                """ - cleanup chat after completed - """
+                await qotli.client.delete_messages(conv.chat_id,
+                                                   [msg.id, response.id])
+    except TimeoutError:
+        await qotli.edit()
